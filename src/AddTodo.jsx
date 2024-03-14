@@ -1,8 +1,9 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
+import { useContext, useState } from "react";
+import { TodoDispatchContext } from "./TodoContext";
 
-export default function AddTodo({ onAddTodo }) {
+export default function AddTodo() {
   const [text, setText] = useState("");
+  const dispatch = useContext(TodoDispatchContext);
 
   return (
     <>
@@ -14,7 +15,11 @@ export default function AddTodo({ onAddTodo }) {
       <button
         onClick={() => {
           setText("");
-          onAddTodo(text);
+          dispatch({
+            type: "added",
+            id: nextId++,
+            text: text,
+          });
         }}
       >
         Add
@@ -23,6 +28,4 @@ export default function AddTodo({ onAddTodo }) {
   );
 }
 
-AddTodo.propTypes = {
-  onAddTodo: PropTypes.func.isRequired,
-};
+let nextId = 3;

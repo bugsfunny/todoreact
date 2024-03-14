@@ -3,42 +3,19 @@ import Todos from "./Todos";
 
 import { useReducer } from "react";
 import AddTodo from "./AddTodo";
+import { TodoContext, TodoDispatchContext } from "./TodoContext";
 
 function App() {
   const [todos, dispatch] = useReducer(todosReducer, initialTodos);
 
-  const addTodo = (text) => {
-    dispatch({
-      type: "added",
-      id: nextId++,
-      text: text,
-    });
-  };
-
-  function updateTodo(todo) {
-    dispatch({
-      type: "updated",
-      todo: todo,
-    });
-  }
-
-  function deleteTodo(id) {
-    dispatch({
-      type: "deleted",
-      id,
-    });
-  }
-
   return (
-    <>
-      <h1>TODO APP</h1>
-      <AddTodo onAddTodo={addTodo} />
-      <Todos
-        todos={todos}
-        onUpdateTodo={updateTodo}
-        onDeleteTodo={deleteTodo}
-      />
-    </>
+    <TodoContext.Provider value={todos}>
+      <TodoDispatchContext.Provider value={dispatch}>
+        <h1>TODO APP</h1>
+        <AddTodo />
+        <Todos />
+      </TodoDispatchContext.Provider>
+    </TodoContext.Provider>
   );
 }
 
@@ -56,8 +33,8 @@ function todosReducer(todos, action) {
     }
     case "changed": {
       return todos.map((t) => {
-        if (t.id === action.task.id) {
-          return action.task;
+        if (t.id === action.todo.id) {
+          return action.todo;
         } else {
           return t;
         }
@@ -72,7 +49,6 @@ function todosReducer(todos, action) {
   }
 }
 
-let nextId = 3;
 const initialTodos = [
   { id: 0, text: "Philosopher’s Path", done: true },
   { id: 1, text: "Visit the temple", done: false },

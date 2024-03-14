@@ -1,8 +1,10 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { TodoDispatchContext } from "./TodoContext";
 
-export default function Todo({ todo, onChange, onDelete }) {
+export default function Todo({ todo }) {
   const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useContext(TodoDispatchContext);
   let todoContent;
   if (isEditing) {
     todoContent = (
@@ -10,9 +12,12 @@ export default function Todo({ todo, onChange, onDelete }) {
         <input
           value={todo.text}
           onChange={(e) => {
-            onChange({
-              ...todo,
-              text: e.target.value,
+            dispatch({
+              type: "changed",
+              todo: {
+                ...todo,
+                text: e.target.value,
+              },
             });
           }}
         />
@@ -33,20 +38,30 @@ export default function Todo({ todo, onChange, onDelete }) {
         type="checkbox"
         checked={todo.done}
         onChange={(e) => {
-          onChange({
-            ...todo,
-            done: e.target.checked,
+          dispatch({
+            type: "changed",
+            todo: {
+              ...todo,
+              done: e.target.checked,
+            },
           });
         }}
       />
       {todoContent}
-      <button onClick={() => onDelete(todo.id)}>Delete</button>
+      <button
+        onClick={() => {
+          dispatch({
+            type: "deleted",
+            id: todo.id,
+          });
+        }}
+      >
+        Delete
+      </button>
     </label>
   );
 }
 
 Todo.propTypes = {
   todo: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
 };

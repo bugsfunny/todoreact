@@ -1,25 +1,14 @@
-import PropTypes from "prop-types";
+import { useContext } from "react";
 import Todo from "./Todo";
+import { TodoContext } from "./TodoContext";
 
-export default function Todos({ todos, onUpdateTodo, onDeleteTodo }) {
+export default function Todos() {
+  const todos = useContext(TodoContext);
   return (
     <ul className="vertical">
       {todos.map((todo) => {
-        return (
-          <Todo
-            key={todo.id}
-            todo={todo}
-            onChange={onUpdateTodo}
-            onDelete={onDeleteTodo}
-          />
-        );
+        return <Todo key={todo.id} todo={todo} />;
       })}
     </ul>
   );
 }
-
-Todos.propTypes = {
-  todos: PropTypes.array.isRequired,
-  onUpdateTodo: PropTypes.func.isRequired,
-  onDeleteTodo: PropTypes.func.isRequired,
-};
